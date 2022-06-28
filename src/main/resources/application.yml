@@ -1,11 +1,14 @@
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3307/bolsaSpring
-    password: root
-    username: root
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  application:
+    name: "@project.name@"
+# perfil ativo que esta sendo usado para carregar o arquivo application-[perfil].yml especifico
+  profiles:
+    active: test
+
 server:
   port: 3030
+
+# Nivel do log que sera mostrado
+logging:
+  level:
+    com.github.rcdomingos.themovies: DEBUG
