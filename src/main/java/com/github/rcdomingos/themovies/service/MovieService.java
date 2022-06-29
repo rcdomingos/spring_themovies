@@ -7,6 +7,10 @@ import com.github.rcdomingos.themovies.model.repository.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,9 +47,17 @@ public class MovieService {
         return new MovieDto(movie);
     }
 
-    public List<MovieDto> getAllMovies() {
-        log.info("getAllMovies() - INICIO - Buscando todos os filmes");
-        return repository.findAll().stream().map(MovieDto::new).collect(Collectors.toList());
+    public Page<MovieDto> getAllMovies(int page, int size, String sortBy) {
+        log.info("getAllMovies() - INICIO - Buscando todos os filmes da pagina {}", page);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Movie> result = repository.findAll(pageable);
+        return result.map(MovieDto::new);
+    }
+    public Page<MovieDto> getAllMoviesByReleaseYear(String releaseYear, int page, int size, String sortBy) {
+        log.info("getAllMoviesByReleaseYear() - INICIO - Buscando os filmes com release_year {} da pagina {}", releaseYear, page);
+        Pageable sortedByName = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Movie> allByReleaseYear = repository.findAllByReleaseYear(releaseYear, sortedByName);
+        return allByReleaseYear.map(MovieDto::new);
     }
 
     public void deleteMovieById(Long movieId) {
